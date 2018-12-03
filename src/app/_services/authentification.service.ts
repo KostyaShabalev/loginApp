@@ -12,9 +12,12 @@ export class AuthentificationService {
 
 	public User = {};
 
+  public route;
+
 	public sentUser;
 
-	private url: string = 'https://incode-store.herokuapp.com/login';
+	private loginUrl: string = 'https://incode-store.herokuapp.com/login';
+  private registerUrl: string = 'https://incode-store.herokuapp.com/auth';
 
 
   constructor(private http: HttpClient) { }
@@ -26,13 +29,21 @@ export class AuthentificationService {
   			'Authorization': 'my-auth-token'
   		})
   	};
-  	
-    console.log(user);
 
-  	return this.http.post(this.url, user, httpOptions)
-  	  .pipe(
-  	  	  // catchError(this.handleError('sendUserData', user))
-  	  	);
+    if (this.route === 'login') {
+      console.log(this.route);
+      return this.http.post(this.loginUrl, user, httpOptions)
+      .pipe(
+          // catchError(this.handleError('sendUserData', user))
+        );
+    } else {
+      console.log(this.route);
+      return this.http.post(this.registerUrl, user, httpOptions)
+      .pipe(
+          // catchError(this.handleError('sendUserData', user))
+        );
+    }
+
   }
 
   subscribeRes() {
