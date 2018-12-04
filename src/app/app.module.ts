@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 
 import { AuthentificationService } from './_services/authentification.service';
+import { TokenInterceptorService } from './_services/token-interceptor.service';
 
 import { AuthGuard } from './auth.guard';
 
@@ -31,7 +32,14 @@ import { AuthGuard } from './auth.guard';
     MatButtonModule,
     HttpClientModule
   ],
-  providers: [AuthentificationService, AuthGuard],
+  providers: [AuthentificationService,
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

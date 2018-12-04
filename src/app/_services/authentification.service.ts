@@ -16,6 +16,12 @@ export class AuthentificationService {
 
 	public User = {};
 
+  public authorizedUser = {
+    login: '',
+    password: '',
+    token: ''
+  };
+
   public route;
 
   public authToken: string;
@@ -39,12 +45,14 @@ export class AuthentificationService {
   	};
 
     if (this.route === 'login') {
-      return this.http.post<any>(this.loginUrl, user, httpOptions)
+      return this.http.post(this.loginUrl, user, httpOptions)
       .pipe(
         map((result: any) => result)
         );
-    } else {
-      return this.http.post<any>(this.registerUrl, user, httpOptions)
+    }
+
+    if (this.route === 'register') {
+      return this.http.post(this.registerUrl, user, httpOptions)
       .pipe(
         map((result: any) => result)
         );
@@ -52,16 +60,9 @@ export class AuthentificationService {
 
   }
 
-  
-  // loggedIn() {
-  //   return !!localStorage.getItem('token');
-  // }
-
   getUser() {
 
-    // return !!localStorage.getItem('token');
-
-    const httpOptions = {
+    let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': ` Bearer ${localStorage.getItem('token')}`
@@ -70,9 +71,12 @@ export class AuthentificationService {
 
     return this.http.get(this.getUserUrl, httpOptions)
       .pipe(
-          map((result: any) => result));
+          map((result: any) => {
+            return result}));
+  }
 
-
+  getToken() {
+    return localStorage.getItem('token');
   }
 
 
