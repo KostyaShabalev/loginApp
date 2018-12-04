@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 
-import { catchError, retry } from 'rxjs/operators';
+import { map } from 'rxjs/internal/operators';
+
+import { Router } from '@angular/router'
+
+// import { catchError, retry } from 'rxjs/operators';
 
 
 @Injectable({
@@ -14,43 +18,62 @@ export class AuthentificationService {
 
   public route;
 
-	public sentUser;
+  public authToken: string;
 
 	private loginUrl: string = 'https://incode-store.herokuapp.com/login';
   private registerUrl: string = 'https://incode-store.herokuapp.com/auth';
+  private getUserUrl: string = 'https://incode-store.herokuapp.com/user';
 
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    ) { }
 
   sendUserData(user) {
+
   	const httpOptions = {
   		headers: new HttpHeaders({
-  			'Content-Type':  'application/json',
-  			'Authorization': 'my-auth-token'
+  			'Content-Type':  'application/json'
   		})
   	};
 
     if (this.route === 'login') {
-      console.log(this.route);
-      return this.http.post(this.loginUrl, user, httpOptions)
+      return this.http.post<any>(this.loginUrl, user, httpOptions)
       .pipe(
-          // catchError(this.handleError('sendUserData', user))
+        map((result: any) => result)
         );
     } else {
-      console.log(this.route);
-      return this.http.post(this.registerUrl, user, httpOptions)
+      return this.http.post<any>(this.registerUrl, user, httpOptions)
       .pipe(
-          // catchError(this.handleError('sendUserData', user))
+        map((result: any) => result)
         );
     }
 
   }
 
-  subscribeRes() {
-  	this.sendUserData(this.User)
-  	  .subscribe(user => this.sentUser = user);
-  }
   
+  // loggedIn() {
+  //   return !!localStorage.getItem('token');
+  // }
+
+  getUser() {
+
+    // return !!localStorage.getItem('token');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': ` Bearer ${localStorage.getItem('token')}`
+      })
+    };
+
+    return this.http.get(this.getUserUrl, httpOptions)
+      .pipe(
+          map((result: any) => result));
+
+
+  }
 
 
 }

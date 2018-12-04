@@ -6,10 +6,15 @@ import { AppComponent } from './app.component';
 
 import { HttpClientModule } from '@angular/common/http';
 
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+
+import { AuthentificationService } from './_services/authentification.service';
+
+import { AuthGuard } from './auth.guard';
+
 
 
 @NgModule({
@@ -26,7 +31,7 @@ import {MatButtonModule} from '@angular/material/button';
     MatButtonModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [AuthentificationService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
