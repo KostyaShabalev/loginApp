@@ -3,47 +3,42 @@ import { CanActivate, Router } from '@angular/router';
 import { AuthentificationService } from './_services/authentification.service';
 
 import { map } from 'rxjs/internal/operators';
+import  { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
+  private hasAccess: boolean;
+
 	constructor(
   	private authService: AuthentificationService,
     private router: Router
-  	) { }
+  	) { 
+    // this.authService.getIsAuthorized()
+    this.authService.getCurrentUser()
+    // this.authService.getUser()
+      .subscribe(user => {
+        debugger;
+          if (!!user) {
+            this.router.navigate(['/home']);
+            this.hasAccess = true;  
+
+            return; 
+          }
+
+          this.hasAccess = false;            
+      });    
+  }
 
 
-  	canActivate(): boolean {
-
-      // if (this.isRegisteredUser() === true) {
-      //   return true;
-      // } else {
-      //   this.router.navigate(['/login']);
-      //   return false;
-      // }
-
-      // if (localStorage.getItem('token')) {
-      //   return true;
-      // } else {
-      //   this.router.navigate(['/login']);
-      //   return false;
-      // }
-
-  	}
-
-    isRegisteredUser() {
-
-      if (this.authService.getUser().subscribe(res => res)) {
-        return true;
-      } else {
-        return false;
+  	canActivate(): Observable<boolean> | boolean {
+      if (!this.hasAccess) {
+        this.router.navigate(['login']);
       }
-
-      
-
-    }
+      return this.hasAccess;
+  	}
 
 
 }

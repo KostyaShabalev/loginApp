@@ -1,5 +1,10 @@
-<p>
-  home works!
-</p>
+<div *ngIf="!!(userData | async)">
+	<p>
+	  Home page
+	</p>
 
-<a mat-button color="primary">Log Out</a>
+	<p>User info: {{(userData | async) | json}}</p>
+
+	<a mat-button color="primary" (click)="logoutUser()">Log Out</a>	
+</div>
+

@@ -2,12 +2,12 @@
 <div class="login">
 
   <mat-form-field>
-    <input matInput placeholder="Login" class="login__input-name" value="login">
+    <input matInput placeholder="Login" class="login__input-name" [(ngModel)]="loginUserData.login">
   </mat-form-field>
   <br>
 
   <mat-form-field>
-    <textarea matInput placeholder="Password" class="login__input-password" value="password"></textarea>
+    <textarea matInput placeholder="Password" class="login__input-password" [(ngModel)]="loginUserData.password"></textarea>
   </mat-form-field>
   <br>
 

@@ -2,9 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 
-import { map } from 'rxjs/internal/operators';
+import { map, switchMap } from 'rxjs/operators';
 
-import { Router } from '@angular/router'
+import { Router } from '@angular/router';
+
+import { BehaviorSubject, Observable, of } from 'rxjs';
+
+import { User } from '../user';
+
 
 // import { catchError, retry } from 'rxjs/operators';
 
@@ -14,71 +19,70 @@ import { Router } from '@angular/router'
 })
 export class AuthentificationService {
 
-	public User = {};
+  private isAuthSubject = new BehaviorSubject<boolean>(false);
 
-  public authorizedUser = {
-    login: '',
-    password: '',
-    token: ''
-  };
+  private userData = new BehaviorSubject<User>(null);
 
   public route;
 
-  public authToken: string;
-
-	private loginUrl: string = 'https://incode-store.herokuapp.com/login';
-  private registerUrl: string = 'https://incode-store.herokuapp.com/auth';
-  private getUserUrl: string = 'https://incode-store.herokuapp.com/user';
-
+  // public authToken: string;
+  private baseUrl: string = 'https://incode-store.herokuapp.com';
 
   constructor(
     private http: HttpClient,
-    private router: Router,
+    private router: Router
     ) { }
 
   sendUserData(user) {
-
-  	const httpOptions = {
-  		headers: new HttpHeaders({
-  			'Content-Type':  'application/json'
-  		})
-  	};
-
+    let observable: Observable<any>;
     if (this.route === 'login') {
-      return this.http.post(this.loginUrl, user, httpOptions)
-      .pipe(
-        map((result: any) => result)
-        );
+      observable = this.http.post(`${this.baseUrl}/login`, user)
     }
 
     if (this.route === 'register') {
-      return this.http.post(this.registerUrl, user, httpOptions)
-      .pipe(
-        map((result: any) => result)
-        );
+      observable = this.http.post(`${this.baseUrl}/auth`, user)
     }
 
+    return observable.pipe(
+      switchMap(data => {
+        if (!!data.token) {
+          localStorage.setItem('token', data.token);
+          return this.getUser();
+        }
+
+        return of(null);
+      })
+    )
   }
 
-  getUser() {
-
-    let httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-        'Authorization': ` Bearer ${localStorage.getItem('token')}`
-      })
-    };
-
-    return this.http.get(this.getUserUrl, httpOptions)
+  getUser(): Observable<User[]> {
+    return this.http.get<User>(`${this.baseUrl}/user`)
       .pipe(
           map((result: any) => {
-            return result}));
+            this.userData.next(result);
+            this.isAuthSubject.next(true);
+            return result
+          })
+      );
+  }
+
+  logout(): void {
+    this.isAuthSubject.next(false);
+    this.userData.next(null);
+    localStorage.clear();
   }
 
   getToken() {
     return localStorage.getItem('token');
   }
 
+  getCurrentUser(): Observable<User>{
+    return this.userData.asObservable();
+  }
+
+  getIsAuthorized(): Observable<any> { // Не вижу, где используется
+    return this.isAuthSubject.asObservable();
+  }
 
 }
 
