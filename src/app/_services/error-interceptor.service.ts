@@ -24,21 +24,21 @@ export class ErrorInterceptorService implements HttpInterceptor {
   	  .pipe(
   	  	catchError(err => {
   	  		if (err.status === 401) {
-  				alert('401 !!!');
+  				alert(`${err.status}: ` + 'Unauthorized user');
   				this.authServise.logout();
   				this.router.navigate(['/login']);
   			}
 
   			if (err.status === 403) {
-  				alert('Such user already exists');
+  				alert(`${err.status}: ${err.error.error}`);
   			}
 
   			if (err.status === 400) {
-  				alert('Please fill all fields');
+  				alert(`${err.status}: ${err.error.error}`);
   			}
 
   			if (err.status === 404) {
-  				alert('User not found');
+  				alert(`${err.status}: ${err.error.error}`);
   				this.authServise.logout();
   			}
 
