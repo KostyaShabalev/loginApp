@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { AuthentificationService } from '../_services/authentification.service';
 
@@ -12,17 +12,11 @@ import { Router } from '@angular/router'
 })
 export class LoginComponent {
 
-  public loginUserData = {
-    login: '',
-    password: ''
-  };
-
-  // public loginUserData = {};
+  public loginUserData = {};
 
 
   constructor(
   	private authService: AuthentificationService,
-  	private elementRef: ElementRef,
     private router: Router
   	) {
 
@@ -34,14 +28,15 @@ export class LoginComponent {
 
   loginUser() {
 
-  	this.authService.route = 'login';
-
-    this.authService.sendUserData(this.loginUserData)
-      .subscribe(
+    if (Object.values(this.loginUserData).length) {
+      this.authService.route = 'login';
+      this.authService.sendUserData(this.loginUserData)
+        .subscribe(
           result => {
             this.router.navigate(['/home']);
           }
         );
+    }
 
   }
 

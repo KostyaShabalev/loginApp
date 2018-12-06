@@ -1,8 +1,9 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { AuthentificationService } from '../_services/authentification.service';
 
 import { Router } from '@angular/router'
+
 
 @Component({
   selector: 'app-register',
@@ -11,30 +12,32 @@ import { Router } from '@angular/router'
 })
 export class RegisterComponent {
 
-  public registerUserData = {
-    login: '',
-    password: ''
-  };
+  public registerUserData = {};
 
   constructor(
   	private authService: AuthentificationService,
-  	private elementRef: ElementRef,
     private router: Router
-  	) { }
+  	) {
+
+    if(localStorage.getItem('token')) {
+      this.router.navigate(['/home']);
+    }
+  }
 
   registerUser() {
-  	this.registerUserData.login = this.elementRef.nativeElement.querySelector('.register__input-name').value;
-  	this.registerUserData.password = this.elementRef.nativeElement.querySelector('.register__input-password').value;
 
-  	this.authService.route = 'register';
-
-    this.authService.sendUserData(this.registerUserData)
-      .subscribe(
+    if (Object.values(this.registerUserData).length) {
+      this.authService.route = 'register';
+      this.authService.sendUserData(this.registerUserData)
+        .subscribe(
           result => {
             localStorage.setItem('token', result.token);
             this.router.navigate(['/home']);
           }
         );
+    }
+
+
 
   }
 

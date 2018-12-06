@@ -16,11 +16,8 @@ export class AuthGuard implements CanActivate {
   	private authService: AuthentificationService,
     private router: Router
   	) { 
-    // this.authService.getIsAuthorized()
     this.authService.getCurrentUser()
-    // this.authService.getUser()
       .subscribe(user => {
-        debugger;
           if (!!user) {
             this.router.navigate(['/home']);
             this.hasAccess = true;  
@@ -35,12 +32,10 @@ export class AuthGuard implements CanActivate {
 
   	canActivate(): Observable<boolean> | boolean {
       if (!this.hasAccess) {
-        this.router.navigate(['login']);
+        this.router.navigate(['/login']);
       }
       return this.hasAccess;
   	}
 
 
 }
-
-

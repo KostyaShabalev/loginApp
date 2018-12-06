@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { AuthentificationService } from './_services/authentification.service';
 import { TokenInterceptorService } from './_services/token-interceptor.service';
+import { ErrorInterceptorService } from './_services/error-interceptor.service';
 
 import { AuthGuard } from './auth.guard';
 import { TestComponent } from './test/test.component';
@@ -43,7 +44,12 @@ import { TestComponent } from './test/test.component';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptorService,
       multi: true
-    }
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptorService,
+      multi: true
+    },
   ],
   bootstrap: [AppComponent]
 })

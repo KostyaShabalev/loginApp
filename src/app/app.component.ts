@@ -16,7 +16,8 @@ export class AppComponent {
   	) {
   	if (!!localStorage.getItem('token')) {
 		this.authService.getUser()
-  			.subscribe(user => {});	
+  			.subscribe(
+          user => {});	
   	}
   }
 }

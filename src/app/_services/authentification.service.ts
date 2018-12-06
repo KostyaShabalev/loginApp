@@ -11,9 +11,6 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { User } from '../user';
 
 
-// import { catchError, retry } from 'rxjs/operators';
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -25,7 +22,6 @@ export class AuthentificationService {
 
   public route;
 
-  // public authToken: string;
   private baseUrl: string = 'https://incode-store.herokuapp.com';
 
   constructor(
@@ -53,9 +49,10 @@ export class AuthentificationService {
         return of(null);
       })
     )
+    
   }
 
-  getUser(): Observable<User[]> {
+  getUser(): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/user`)
       .pipe(
           map((result: any) => {
@@ -80,7 +77,7 @@ export class AuthentificationService {
     return this.userData.asObservable();
   }
 
-  getIsAuthorized(): Observable<any> { // Не вижу, где используется
+  getIsAuthorized(): Observable<any> {
     return this.isAuthSubject.asObservable();
   }
 
